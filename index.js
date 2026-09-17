@@ -8,7 +8,7 @@ const HttpError = require('@stores.com/http-error');
  * @returns {Promise<Object>} The parsed JSON response.
  * @throws {HttpError} If the response has a non-success HTTP status.
  */
-async function parseResponse(response) {
+async function handleResponse(response) {
     if (!response.ok) {
         throw await HttpError.from(response);
     }
@@ -56,7 +56,7 @@ function MyCarrier(args) {
             signal: AbortSignal.timeout(options.timeout ?? _options.timeout)
         });
 
-        return await parseResponse(response);
+        return await handleResponse(response);
     };
 
     /**
@@ -88,7 +88,7 @@ function MyCarrier(args) {
             signal: AbortSignal.timeout(options.timeout ?? _options.timeout)
         });
 
-        return await parseResponse(response);
+        return await handleResponse(response);
     };
 
     /**
@@ -118,7 +118,7 @@ function MyCarrier(args) {
             signal: AbortSignal.timeout(options.timeout ?? _options.timeout)
         });
 
-        return await parseResponse(response);
+        return await handleResponse(response);
     };
 
     /**
@@ -141,7 +141,7 @@ function MyCarrier(args) {
             signal: AbortSignal.timeout(options.timeout ?? _options.timeout)
         });
 
-        return await parseResponse(response);
+        return await handleResponse(response);
     };
 }
 
