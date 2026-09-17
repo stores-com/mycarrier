@@ -124,16 +124,12 @@ function MyCarrier(args) {
     /**
      * Get shipment details by shipment ID or quote reference ID.
      *
-     * After receiving a customer webhook, use its ShipmentId or QuoteReferenceId
-     * to retrieve the current shipment details. Webhook registration is separate.
-     *
      * @param {string} id - Shipment ID or quote reference ID.
      * @param {Object} [options] - Per-call options.
      * @param {number} [options.timeout] - Override the client timeout in milliseconds.
      * @returns {Promise<Object>} The full response, with shipment details in data.
      * @throws {HttpError} If the response has a non-success HTTP status, including 404 for a missing shipment.
      * @see https://developer.mycarrier.io/reference/shipmentdetails-2
-     * @see https://developer.mycarrier.io/docs/webhooks
      * @example
      * const response = await myCarrier.getShipmentDetails('SHIPMENT-1');
      */

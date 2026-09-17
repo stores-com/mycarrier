@@ -94,32 +94,6 @@ const status = shipment.statusCode;
 
 This initial release covers these four endpoints.
 
-## Webhooks
-
-MyCarrier's [Webhooks Guide](https://developer.mycarrier.io/docs/webhooks) describes notifications sent **from MyCarrier to your application's HTTP endpoint**. It documents these events:
-
-- [shipment.created](https://developer.mycarrier.io/docs/update-shipment-webhook) — shipment dispatched.
-- [shipment.updated](https://developer.mycarrier.io/docs/update-shipment-webhooks) — shipment updated.
-- [shipment.canceled](https://developer.mycarrier.io/docs/canceled-shipment-webhook) — shipment canceled.
-- [shipment.tracking.updated](https://developer.mycarrier.io/docs/shipment-tracking-webhook) — tracking updated.
-- [invoice.auto_approve](https://developer.mycarrier.io/docs/invoice-auto-approved) — invoice automatically approved.
-- [invoice.approve](https://developer.mycarrier.io/docs/invoice-approved-webhook) — invoice manually approved.
-
-Payloads vary by event. The created, updated, and canceled shipment examples use `{ Message, Payload }`; the tracking example places shipment fields at the top level. Use each event's documented sample rather than assuming a shared envelope.
-
-After your application has authenticated and validated a shipment-event delivery, including its identifier, you can retrieve current shipment details:
-
-```js
-const payload = body.Payload ?? body;
-const response = await myCarrier.getShipmentDetails(payload.ShipmentId ?? payload.QuoteReferenceId);
-```
-
-The API-reference routes [POST /carrierintegrations/webhook/smc3/documents](https://developer.mycarrier.io/reference/postcarrierintegrationswebhooksmc3documents) and [POST /carrierintegrations/webhook/smc3/status](https://developer.mycarrier.io/reference/postcarrierintegrationswebhooksmc3status) accept document and status payloads **into MyCarrier**; they do not register customer callback URLs. Their paths and schemas suggest SMC3 is the intended caller, but that is an inference rather than an explicit statement in the documentation.
-
-The public guide mentions registering a webhook but gives no registration procedure, API, or UI location. Customer callback setup and delivery authentication remain unverified, so this client does not provide a webhook registration method.
-
-For account setup, ask MyCarrier where to register your HTTPS callback URL and desired event names, how deliveries are authenticated, and what acknowledgement and retry behavior your receiver must support. For shipment tracking, request `shipment.tracking.updated`; add the other shipment events as needed.
-
 ## Errors
 
 Every non-2xx response throws an [`HttpError`](https://github.com/stores-com/http-error), including HTTP 400. It retains:
