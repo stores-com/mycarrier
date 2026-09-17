@@ -120,6 +120,29 @@ function MyCarrier(args) {
 
         return await parseResponse(response);
     };
+
+    /**
+     * Get shipment details by shipment ID or quote reference ID.
+     *
+     * @param {string} id - Shipment ID or quote reference ID.
+     * @param {Object} [options] - Per-call options.
+     * @param {number} [options.timeout] - Override the client timeout in milliseconds.
+     * @returns {Promise<Object>} The full response, with shipment details in data.
+     * @throws {HttpError} If the response has a non-success HTTP status, including 404 for a missing shipment.
+     * @see https://developer.mycarrier.io/reference/shipmentdetails-2
+     * @example
+     * const response = await myCarrier.getShipmentDetails('SHIPMENT-1');
+     */
+    this.getShipmentDetails = async function(id, options = {}) {
+        const response = await fetch(`${baseUrl}/api/v1/shipments/${encodeURIComponent(id)}`, {
+            headers: {
+                'X-Mc-Api-Key': _options.api_key
+            },
+            signal: AbortSignal.timeout(options.timeout ?? _options.timeout)
+        });
+
+        return await parseResponse(response);
+    };
 }
 
 module.exports = MyCarrier;

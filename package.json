@@ -2,7 +2,7 @@
     "dependencies": {
         "@stores.com/http-error": "~1.2.0"
     },
-    "description": "A Node.js client for MyCarrier LTL freight rates and shipping locations.",
+    "description": "A Node.js client for MyCarrier LTL freight rates, shipping locations, and shipment details.",
     "devDependencies": {
         "@eslint/js": "^10.0.1",
         "eslint": "^10.10.0",

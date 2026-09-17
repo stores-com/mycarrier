@@ -1,6 +1,6 @@
 # MyCarrier
 
-A Node.js client for MyCarrier LTL freight rates and saved shipping locations.
+A Node.js client for MyCarrier LTL freight rates, saved shipping locations, and shipment details.
 
 Official documentation: [MyCarrier Developer Guide](https://developer.mycarrier.io/docs/getting-started) · [MyCarrier API Reference](https://developer.mycarrier.io/reference).
 
@@ -29,7 +29,7 @@ The client uses CommonJS, native `fetch`, promises, carrier-native request and r
 
 Supply the API key issued for your MyCarrier account as `api_key`. Each request sends it in `X-Mc-Api-Key`. No email, Basic authentication, Bearer prefix, token exchange, or token cache is used. The library does not read environment variables itself; the example above passes the key explicitly.
 
-The endpoint references document the `X-Mc-Api-Key` header. MyCarrier's general [authentication guide](https://developer.mycarrier.io/docs/authentication-1) describes Basic authentication with an "Order API Key"; this client uses header-based API-key authentication for the shipping-location and rating endpoints.
+The endpoint references document the `X-Mc-Api-Key` header. MyCarrier's general [authentication guide](https://developer.mycarrier.io/docs/authentication-1) describes Basic authentication with an "Order API Key"; this client uses header-based API-key authentication for the endpoints below.
 
 | Option | Default | Description |
 | --- | --- | --- |
@@ -80,7 +80,19 @@ const rates = response.data.rates;
 
 Use `RATE_ONLY` for estimates. The API also supports actions that save quotes; this client forwards the action supplied by the caller. Applications should inspect each rate's `statusInfo`: a rate may contain a price and still report an error. Account configuration, contacts, and supported payment terms can affect which carriers return rates.
 
-This initial release covers these three endpoints. Shipment booking, cancellation, documents, and tracking are not implemented.
+### `getShipmentDetails(id, options = {})`
+
+Calls `GET /api/v1/shipments/{id}`. Pass a shipment ID or quote reference ID. The ID is URL encoded, and the entire JSON response is returned, with shipment details in `data`, including its status, stops, pricing, and document links. A missing shipment raises an `HttpError` with `error.cause.status === 404`.
+
+See MyCarrier's [Get Shipment Details documentation](https://developer.mycarrier.io/reference/shipmentdetails-2) for the identifier, response schema, and status codes.
+
+```js
+const response = await myCarrier.getShipmentDetails('SHIPMENT-1', { timeout: 15000 });
+const shipment = response.data;
+const status = shipment.statusCode;
+```
+
+This initial release covers these four endpoints.
 
 ## Errors
 
