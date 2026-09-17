@@ -2,11 +2,13 @@
 
 A Node.js client for MyCarrier LTL freight rates and saved shipping locations.
 
+Official documentation: [MyCarrier Developer Guide](https://developer.mycarrier.io/docs/getting-started) · [MyCarrier API Reference](https://developer.mycarrier.io/reference).
+
 ```sh
-npm install github:stores-com/my-carrier#ca5d490cc2e48300534b3bd7f5248ae640a8f21d
+npm install github:stores-com/my-carrier
 ```
 
-The initial release is available from GitHub. The command above pins the tested client commit; npm registry publication is pending. Once published, install with `npm install my-carrier`.
+The initial release is available from GitHub; npm registry publication is pending. Once published, install with `npm install my-carrier`.
 
 ## Usage
 
@@ -27,6 +29,8 @@ The client uses CommonJS, native `fetch`, promises, carrier-native request and r
 
 Supply the API key issued for your MyCarrier account as `api_key`. Each request sends it in `X-Mc-Api-Key`. No email, Basic authentication, Bearer prefix, token exchange, or token cache is used. The library does not read environment variables itself; the example above passes the key explicitly.
 
+The endpoint references document the `X-Mc-Api-Key` header. MyCarrier's general [authentication guide](https://developer.mycarrier.io/docs/authentication-1) describes Basic authentication with an "Order API Key"; this client uses header-based API-key authentication for the shipping-location and rating endpoints.
+
 | Option | Default | Description |
 | --- | --- | --- |
 | `api_key` | Required from the caller | MyCarrier API key |
@@ -41,6 +45,8 @@ Every method accepts a final options object with a `timeout` override. Requests 
 
 Calls `GET /api/v1/address/shipping-locations`. Query parameters are URL encoded and forwarded to the API. The entire JSON response is returned, including `data.shippingLocations`. Pagination is explicit: this method makes one request and does not automatically fetch subsequent pages.
 
+See MyCarrier's [Get Shipping Locations List reference](https://developer.mycarrier.io/reference/getshippinglocations-1) for the `skip` and `take` parameters, response schema, and status codes.
+
 ```js
 const response = await myCarrier.getShippingLocations({ take: 50 }, { timeout: 15000 });
 ```
@@ -48,6 +54,8 @@ const response = await myCarrier.getShippingLocations({ take: 50 }, { timeout: 1
 ### `getRates(request, options = {})`
 
 Calls `POST /api/v1/quote/rate`. Pass a rate request in MyCarrier's own schema; the library serializes it without adding account, address, payment, freight-class, or shipment defaults. The entire JSON response is returned, including `data.rates` and `data.statusInfo`.
+
+See MyCarrier's [Get Rates reference](https://developer.mycarrier.io/reference/getrates-1) for the request fields, allowed values, response schema, and status codes.
 
 ```js
 // rateRequest is a MyCarrier request containing your stops and shipping details.

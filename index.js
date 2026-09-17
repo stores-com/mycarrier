@@ -23,6 +23,8 @@ async function parseResponse(response) {
  * @param {string} args.api_key - MyCarrier API key, sent in the X-Mc-Api-Key header.
  * @param {number} [args.timeout=60000] - Request timeout in milliseconds.
  * @param {string} [args.url='https://api.mycarriertms.com'] - API base URL.
+ * @see https://developer.mycarrier.io/docs/getting-started
+ * @see https://developer.mycarrier.io/reference
  * @example
  * const myCarrier = new MyCarrier({ api_key: process.env.MYCARRIER_API_KEY });
  */
@@ -37,11 +39,14 @@ function MyCarrier(args) {
     /**
      * Get saved shipping locations for the account.
      *
-     * @param {Object} [query] - Query parameters passed to the API, such as take.
+     * @param {Object} [query] - Query parameters passed to the API.
+     * @param {number} [query.skip] - Number of records to skip.
+     * @param {number} [query.take] - Number of records to return.
      * @param {Object} [options] - Per-call options.
      * @param {number} [options.timeout] - Override the client timeout in milliseconds.
      * @returns {Promise<Object>} The full response, including data.shippingLocations.
      * @throws {HttpError} If the response has a non-success HTTP status.
+     * @see https://developer.mycarrier.io/reference/getshippinglocations-1
      * @example
      * const response = await myCarrier.getShippingLocations({ take: 50 });
      */
@@ -70,11 +75,12 @@ function MyCarrier(args) {
      * estimate without saving a quote. Inspect the statusInfo on individual rates,
      * since a priced rate can still have an Error status.
      *
-     * @param {Object} request - The carrier's rate request.
+     * @param {Object} request - Rate request using the schema in MyCarrier's Get Rates reference.
      * @param {Object} [options] - Per-call options.
      * @param {number} [options.timeout] - Override the client timeout in milliseconds.
      * @returns {Promise<Object>} The full response, including data.rates and data.statusInfo.
      * @throws {HttpError} For non-success HTTP statuses, including 400; error.json preserves carrier diagnostics.
+     * @see https://developer.mycarrier.io/reference/getrates-1
      * @example
      * const response = await myCarrier.getRates(request, { timeout: 90000 });
      */
