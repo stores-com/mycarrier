@@ -32,5 +32,5 @@
         "test:coverage": "node --test --experimental-test-coverage --test-reporter=spec test/*.js",
         "test:only": "node --test --test-only --test-reporter=spec test/*.js"
     },
-    "version": "0.0.3"
+    "version": "0.0.4"
 }

@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.0.4
+
+- Alphabetize public methods in the client and README.
+
 ## 0.0.3
 
 - Simplify the README and JSDoc descriptions of client behavior.

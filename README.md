@@ -39,27 +39,6 @@ Every method accepts a final options object with a `timeout` override.
 
 ## Methods
 
-### `getShippingLocation(locationId, options = {})`
-
-Calls `GET /api/v1/address/shipping-locations/{locationId}`. Pass a `locationId` returned by `getShippingLocations()`. The ID is URL encoded, and the entire JSON response is returned, with the location's address, contacts, and carrier configuration in `data`. A missing location raises an `HttpError` with `error.cause.status === 404`.
-
-See MyCarrier's [Get Shipping Location by Location ID reference](https://developer.mycarrier.io/reference/getshippinglocationbylocationid-1) for the identifier, response schema, and status codes.
-
-```js
-const response = await myCarrier.getShippingLocation('WAREHOUSE-1', { timeout: 15000 });
-const shippingLocation = response.data;
-```
-
-### `getShippingLocations(query = {}, options = {})`
-
-Calls `GET /api/v1/address/shipping-locations`. Query parameters are URL encoded and forwarded to the API. The entire JSON response is returned, including `data.shippingLocations`. Each request returns one page; use `skip` and `take` to retrieve additional pages.
-
-See MyCarrier's [Get Shipping Locations List reference](https://developer.mycarrier.io/reference/getshippinglocations-1) for the `skip` and `take` parameters, response schema, and status codes.
-
-```js
-const response = await myCarrier.getShippingLocations({ take: 50 }, { timeout: 15000 });
-```
-
 ### `getRates(request, options = {})`
 
 Calls `POST /api/v1/quote/rate`. Pass a rate request in MyCarrier's schema; the library serializes it as JSON. The entire JSON response is returned, including `data.rates` and `data.statusInfo`.
@@ -88,6 +67,27 @@ See MyCarrier's [Get Shipment Details documentation](https://developer.mycarrier
 const response = await myCarrier.getShipmentDetails('SHIPMENT-1', { timeout: 15000 });
 const shipment = response.data;
 const status = shipment.statusCode;
+```
+
+### `getShippingLocation(locationId, options = {})`
+
+Calls `GET /api/v1/address/shipping-locations/{locationId}`. Pass a `locationId` returned by `getShippingLocations()`. The ID is URL encoded, and the entire JSON response is returned, with the location's address, contacts, and carrier configuration in `data`. A missing location raises an `HttpError` with `error.cause.status === 404`.
+
+See MyCarrier's [Get Shipping Location by Location ID reference](https://developer.mycarrier.io/reference/getshippinglocationbylocationid-1) for the identifier, response schema, and status codes.
+
+```js
+const response = await myCarrier.getShippingLocation('WAREHOUSE-1', { timeout: 15000 });
+const shippingLocation = response.data;
+```
+
+### `getShippingLocations(query = {}, options = {})`
+
+Calls `GET /api/v1/address/shipping-locations`. Query parameters are URL encoded and forwarded to the API. The entire JSON response is returned, including `data.shippingLocations`. Each request returns one page; use `skip` and `take` to retrieve additional pages.
+
+See MyCarrier's [Get Shipping Locations List reference](https://developer.mycarrier.io/reference/getshippinglocations-1) for the `skip` and `take` parameters, response schema, and status codes.
+
+```js
+const response = await myCarrier.getShippingLocations({ take: 50 }, { timeout: 15000 });
 ```
 
 This initial release covers these four endpoints.

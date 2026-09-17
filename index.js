@@ -37,6 +37,59 @@ function MyCarrier(args) {
     const baseUrl = _options.url.replace(/\/+$/, '');
 
     /**
+     * Request freight rates using a MyCarrier rate request.
+     *
+     * The request is forwarded unchanged. Use action: 'RATE_ONLY' for a rate
+     * estimate. Inspect the statusInfo on individual rates,
+     * since a priced rate can still have an Error status.
+     *
+     * @param {Object} request - Rate request using the schema in MyCarrier's Get Rates reference.
+     * @param {Object} [options] - Per-call options.
+     * @param {number} [options.timeout] - Override the client timeout in milliseconds.
+     * @returns {Promise<Object>} The full response, including data.rates and data.statusInfo.
+     * @throws {HttpError} For non-success HTTP statuses, including 400; error.json preserves carrier diagnostics.
+     * @see https://developer.mycarrier.io/reference/getrates-1
+     * @example
+     * const response = await myCarrier.getRates(request, { timeout: 90000 });
+     */
+    this.getRates = async function(request, options = {}) {
+        const response = await fetch(`${baseUrl}/api/v1/quote/rate`, {
+            body: JSON.stringify(request),
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Mc-Api-Key': _options.api_key
+            },
+            method: 'POST',
+            signal: AbortSignal.timeout(options.timeout ?? _options.timeout)
+        });
+
+        return await handleResponse(response);
+    };
+
+    /**
+     * Get shipment details by shipment ID or quote reference ID.
+     *
+     * @param {string} id - Shipment ID or quote reference ID.
+     * @param {Object} [options] - Per-call options.
+     * @param {number} [options.timeout] - Override the client timeout in milliseconds.
+     * @returns {Promise<Object>} The full response, with shipment details in data.
+     * @throws {HttpError} If the response has a non-success HTTP status, including 404 for a missing shipment.
+     * @see https://developer.mycarrier.io/reference/shipmentdetails-2
+     * @example
+     * const response = await myCarrier.getShipmentDetails('SHIPMENT-1');
+     */
+    this.getShipmentDetails = async function(id, options = {}) {
+        const response = await fetch(`${baseUrl}/api/v1/shipments/${encodeURIComponent(id)}`, {
+            headers: {
+                'X-Mc-Api-Key': _options.api_key
+            },
+            signal: AbortSignal.timeout(options.timeout ?? _options.timeout)
+        });
+
+        return await handleResponse(response);
+    };
+
+    /**
      * Get a saved shipping location by its location ID.
      *
      * @param {string} locationId - Shipping location identifier, as returned by getShippingLocations.
@@ -82,59 +135,6 @@ function MyCarrier(args) {
         }
 
         const response = await fetch(url, {
-            headers: {
-                'X-Mc-Api-Key': _options.api_key
-            },
-            signal: AbortSignal.timeout(options.timeout ?? _options.timeout)
-        });
-
-        return await handleResponse(response);
-    };
-
-    /**
-     * Request freight rates using a MyCarrier rate request.
-     *
-     * The request is forwarded unchanged. Use action: 'RATE_ONLY' for a rate
-     * estimate. Inspect the statusInfo on individual rates,
-     * since a priced rate can still have an Error status.
-     *
-     * @param {Object} request - Rate request using the schema in MyCarrier's Get Rates reference.
-     * @param {Object} [options] - Per-call options.
-     * @param {number} [options.timeout] - Override the client timeout in milliseconds.
-     * @returns {Promise<Object>} The full response, including data.rates and data.statusInfo.
-     * @throws {HttpError} For non-success HTTP statuses, including 400; error.json preserves carrier diagnostics.
-     * @see https://developer.mycarrier.io/reference/getrates-1
-     * @example
-     * const response = await myCarrier.getRates(request, { timeout: 90000 });
-     */
-    this.getRates = async function(request, options = {}) {
-        const response = await fetch(`${baseUrl}/api/v1/quote/rate`, {
-            body: JSON.stringify(request),
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Mc-Api-Key': _options.api_key
-            },
-            method: 'POST',
-            signal: AbortSignal.timeout(options.timeout ?? _options.timeout)
-        });
-
-        return await handleResponse(response);
-    };
-
-    /**
-     * Get shipment details by shipment ID or quote reference ID.
-     *
-     * @param {string} id - Shipment ID or quote reference ID.
-     * @param {Object} [options] - Per-call options.
-     * @param {number} [options.timeout] - Override the client timeout in milliseconds.
-     * @returns {Promise<Object>} The full response, with shipment details in data.
-     * @throws {HttpError} If the response has a non-success HTTP status, including 404 for a missing shipment.
-     * @see https://developer.mycarrier.io/reference/shipmentdetails-2
-     * @example
-     * const response = await myCarrier.getShipmentDetails('SHIPMENT-1');
-     */
-    this.getShipmentDetails = async function(id, options = {}) {
-        const response = await fetch(`${baseUrl}/api/v1/shipments/${encodeURIComponent(id)}`, {
             headers: {
                 'X-Mc-Api-Key': _options.api_key
             },
