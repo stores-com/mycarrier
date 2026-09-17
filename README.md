@@ -21,7 +21,7 @@ const response = await myCarrier.getShippingLocations({ take: 50 });
 const shippingLocations = response.data.shippingLocations;
 ```
 
-The client follows the same conventions as [Freight Club](https://github.com/stores-com/freight-club): CommonJS, native `fetch`, promises, carrier-native request and response objects, and `@stores.com/http-error` errors. Node.js 18 or later is required.
+The client uses CommonJS, native `fetch`, promises, carrier-native request and response objects, and `@stores.com/http-error` errors. Node.js 18 or later is required.
 
 ## Authentication and configuration
 
