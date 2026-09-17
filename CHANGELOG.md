@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.0.3
+
+- Simplify the README and JSDoc descriptions of client behavior.
+
 ## 0.0.2
 
 - Update installation instructions to use the published npm package.
