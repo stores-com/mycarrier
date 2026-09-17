@@ -25,17 +25,17 @@ The client uses CommonJS, native `fetch`, promises, carrier-native request and r
 
 ## Authentication and configuration
 
-Supply the API key issued for your MyCarrier account as `api_key`. Each request sends it in `X-Mc-Api-Key`. No email, Basic authentication, Bearer prefix, token exchange, or token cache is used. The library does not read environment variables itself; the example above passes the key explicitly.
+Supply the API key issued for your MyCarrier account as `api_key`. Each request sends it in `X-Mc-Api-Key`.
 
-MyCarrier's newer [Order API authentication update](https://help-center.mycarriertms.com/en/articles/11464701-order-api-authentication-update) documents the switch from Basic authentication to `X-MC-Api-Key`. The older [developer authentication guide](https://developer.mycarrier.io/docs/authentication-1) still describes Basic authentication; the endpoint references and this client use the API-key header.
+See MyCarrier's [API-key authentication guide](https://help-center.mycarriertms.com/en/articles/11464701-order-api-authentication-update) for key setup and header requirements.
 
 | Option | Default | Description |
 | --- | --- | --- |
 | `api_key` | Required from the caller | MyCarrier API key |
-| `url` | `https://api.mycarriertms.com` | API base URL, without `/api/v1` |
+| `url` | `https://api.mycarriertms.com` | API base URL; the client appends endpoint paths starting with `/api/v1` |
 | `timeout` | `60000` | Request timeout in milliseconds |
 
-Every method accepts a final options object with a `timeout` override. Requests are made once; retry and caching policies belong to the application.
+Every method accepts a final options object with a `timeout` override.
 
 ## Methods
 
@@ -52,7 +52,7 @@ const shippingLocation = response.data;
 
 ### `getShippingLocations(query = {}, options = {})`
 
-Calls `GET /api/v1/address/shipping-locations`. Query parameters are URL encoded and forwarded to the API. The entire JSON response is returned, including `data.shippingLocations`. Pagination is explicit: this method makes one request and does not automatically fetch subsequent pages.
+Calls `GET /api/v1/address/shipping-locations`. Query parameters are URL encoded and forwarded to the API. The entire JSON response is returned, including `data.shippingLocations`. Each request returns one page; use `skip` and `take` to retrieve additional pages.
 
 See MyCarrier's [Get Shipping Locations List reference](https://developer.mycarrier.io/reference/getshippinglocations-1) for the `skip` and `take` parameters, response schema, and status codes.
 
@@ -62,7 +62,7 @@ const response = await myCarrier.getShippingLocations({ take: 50 }, { timeout: 1
 
 ### `getRates(request, options = {})`
 
-Calls `POST /api/v1/quote/rate`. Pass a rate request in MyCarrier's own schema; the library serializes it without adding account, address, payment, freight-class, or shipment defaults. The entire JSON response is returned, including `data.rates` and `data.statusInfo`.
+Calls `POST /api/v1/quote/rate`. Pass a rate request in MyCarrier's schema; the library serializes it as JSON. The entire JSON response is returned, including `data.rates` and `data.statusInfo`.
 
 See MyCarrier's [Get Rates reference](https://developer.mycarrier.io/reference/getrates-1) for the request fields, allowed values, response schema, and status codes.
 
@@ -100,7 +100,7 @@ Every non-2xx response throws an [`HttpError`](https://github.com/stores-com/htt
 - `error.json`: parsed response body, when the body is valid JSON.
 - `error.text`: original response body, when available.
 
-MyCarrier can return HTTP 400 with useful carrier decline reasons or validation details. Applications can inspect those details without losing the HTTP failure status:
+MyCarrier can return HTTP 400 with carrier decline reasons or validation details. Applications can inspect those details on the HTTP error:
 
 ```js
 try {
@@ -115,7 +115,7 @@ try {
 }
 ```
 
-Network failures, timeouts, and invalid JSON in successful responses propagate as native errors. An HTTP success does not imply that every individual rate succeeded; carrier status objects are returned unchanged.
+Network failures, timeouts, and invalid JSON in successful responses propagate as native errors. Check each returned rate's `statusInfo` for carrier errors, including responses with HTTP 200.
 
 ## Development
 
@@ -127,9 +127,9 @@ npm run test:coverage
 npm pack --dry-run
 ```
 
-Use Node.js 24 for development tooling. The tests use synthetic responses and require no account credentials or live carrier requests. CI runs lint on Node.js 24 and tests across Node.js 18, 20, 22, and 24. The npm package contains only the client, package metadata, README, license, and changelog.
+Use Node.js 24 for development tooling. Tests use mocked HTTP requests and synthetic responses. CI runs lint on Node.js 24 and tests across Node.js 18, 20, 22, and 24.
 
-The manual Publish workflow runs lint and tests on the checked-out `main` commit before publishing with provenance and creating a GitHub release. Configure npm publishing authorization for the repository before running it.
+The manual Publish workflow verifies `main`, publishes with provenance, and creates a GitHub release.
 
 ## License
 

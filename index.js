@@ -94,8 +94,8 @@ function MyCarrier(args) {
     /**
      * Request freight rates using a MyCarrier rate request.
      *
-     * The request is forwarded unchanged. Use action: 'RATE_ONLY' to request an
-     * estimate without saving a quote. Inspect the statusInfo on individual rates,
+     * The request is forwarded unchanged. Use action: 'RATE_ONLY' for a rate
+     * estimate. Inspect the statusInfo on individual rates,
      * since a priced rate can still have an Error status.
      *
      * @param {Object} request - Rate request using the schema in MyCarrier's Get Rates reference.
