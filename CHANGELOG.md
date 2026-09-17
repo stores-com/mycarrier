@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.0.2
+
+- Update installation instructions to use the published npm package.
+
 ## 0.0.1
 
 - Add MyCarrier API key authentication, freight rate requests, and shipping location queries.
