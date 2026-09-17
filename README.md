@@ -100,7 +100,7 @@ Network failures, timeouts, and invalid JSON in successful responses propagate a
 
 ```sh
 npm install
-npm run lint
+npx eslint .
 npm test
 npm run test:coverage
 npm pack --dry-run
