@@ -37,6 +37,29 @@ function MyCarrier(args) {
     const baseUrl = _options.url.replace(/\/+$/, '');
 
     /**
+     * Get a saved shipping location by its location ID.
+     *
+     * @param {string} locationId - Shipping location identifier, as returned by getShippingLocations.
+     * @param {Object} [options] - Per-call options.
+     * @param {number} [options.timeout] - Override the client timeout in milliseconds.
+     * @returns {Promise<Object>} The full response, with shipping location details in data.
+     * @throws {HttpError} If the response has a non-success HTTP status, including 404 for a missing location.
+     * @see https://developer.mycarrier.io/reference/getshippinglocationbylocationid-1
+     * @example
+     * const response = await myCarrier.getShippingLocation('WAREHOUSE-1');
+     */
+    this.getShippingLocation = async function(locationId, options = {}) {
+        const response = await fetch(`${baseUrl}/api/v1/address/shipping-locations/${encodeURIComponent(locationId)}`, {
+            headers: {
+                'X-Mc-Api-Key': _options.api_key
+            },
+            signal: AbortSignal.timeout(options.timeout ?? _options.timeout)
+        });
+
+        return await parseResponse(response);
+    };
+
+    /**
      * Get saved shipping locations for the account.
      *
      * @param {Object} [query] - Query parameters passed to the API.

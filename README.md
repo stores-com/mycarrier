@@ -41,6 +41,17 @@ Every method accepts a final options object with a `timeout` override. Requests 
 
 ## Methods
 
+### `getShippingLocation(locationId, options = {})`
+
+Calls `GET /api/v1/address/shipping-locations/{locationId}`. Pass a `locationId` returned by `getShippingLocations()`. The ID is URL encoded, and the entire JSON response is returned, with the location's address, contacts, and carrier configuration in `data`. A missing location raises an `HttpError` with `error.cause.status === 404`.
+
+See MyCarrier's [Get Shipping Location by Location ID reference](https://developer.mycarrier.io/reference/getshippinglocationbylocationid-1) for the identifier, response schema, and status codes.
+
+```js
+const response = await myCarrier.getShippingLocation('WAREHOUSE-1', { timeout: 15000 });
+const shippingLocation = response.data;
+```
+
 ### `getShippingLocations(query = {}, options = {})`
 
 Calls `GET /api/v1/address/shipping-locations`. Query parameters are URL encoded and forwarded to the API. The entire JSON response is returned, including `data.shippingLocations`. Pagination is explicit: this method makes one request and does not automatically fetch subsequent pages.
@@ -69,7 +80,7 @@ const rates = response.data.rates;
 
 Use `RATE_ONLY` for estimates. The API also supports actions that save quotes; this client forwards the action supplied by the caller. Applications should inspect each rate's `statusInfo`: a rate may contain a price and still report an error. Account configuration, contacts, and supported payment terms can affect which carriers return rates.
 
-This initial release covers these two endpoints. Shipment booking, cancellation, documents, and tracking are not implemented.
+This initial release covers these three endpoints. Shipment booking, cancellation, documents, and tracking are not implemented.
 
 ## Errors
 

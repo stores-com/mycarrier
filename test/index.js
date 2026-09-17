@@ -7,6 +7,11 @@ const MyCarrier = require('../index');
 
 const endpoints = [
     {
+        name: 'getShippingLocation',
+        path: '/api/v1/address/shipping-locations/location-1',
+        invoke: (client, options) => client.getShippingLocation('location-1', options)
+    },
+    {
         name: 'getShippingLocations',
         path: '/api/v1/address/shipping-locations',
         invoke: (client, options) => client.getShippingLocations({}, options)
@@ -40,6 +45,69 @@ test('shipping locations preserves the response and uses API-key authentication 
     assert.equal(calls[0].options.method ?? 'GET', 'GET');
     assert.equal(calls[0].options.body, undefined);
     assert.deepEqual([...new Headers(calls[0].options.headers)], [['x-mc-api-key', 'first-key']]);
+});
+
+test('a shipping location preserves its full response and treats the location ID as one path segment', async (t) => {
+    const locationId = 'Dock A/B?zone#50% Caf\u00e9';
+    const body = {
+        data: {
+            locationId,
+            addressLine1: '123 Example Street',
+            contacts: [{ name: 'Example Contact', email: 'contact@example.test' }],
+            integratedCarriers: [{ name: 'Example Carrier', active: true }],
+            customerExtension: { active: false, instructions: null }
+        },
+        errors: [],
+        statusCode: 200,
+        traceId: 'shipping-location-request'
+    };
+    const calls = [];
+
+    t.mock.method(globalThis, 'fetch', async (url, options) => {
+        calls.push({ url: new URL(url), options });
+        return Response.json(body);
+    });
+
+    const client = new MyCarrier({ api_key: 'location-key' });
+
+    assert.deepEqual(await client.getShippingLocation(locationId), body);
+    assert.equal(calls.length, 1);
+    assert.equal(calls[0].url.origin, 'https://api.mycarriertms.com');
+    assert.equal(calls[0].url.pathname, '/api/v1/address/shipping-locations/Dock%20A%2FB%3Fzone%2350%25%20Caf%C3%A9');
+    assert.equal(calls[0].url.search, '');
+    assert.equal(calls[0].url.hash, '');
+    assert.equal(calls[0].options.method ?? 'GET', 'GET');
+    assert.equal(calls[0].options.body, undefined);
+    assert.deepEqual([...new Headers(calls[0].options.headers)], [['x-mc-api-key', 'location-key']]);
+});
+
+test('a shipping location uses the configured URL prefix and preserves HTTP 404 diagnostics', async (t) => {
+    const diagnostics = {
+        data: null,
+        statusInfo: { status: 'Error', message: 'Shipping location was not found.' },
+        traceId: 'missing-location-request'
+    };
+    const calls = [];
+
+    t.mock.method(globalThis, 'fetch', async (url, options) => {
+        calls.push({ url, options });
+        return Response.json(diagnostics, { status: 404, statusText: 'Not Found' });
+    });
+
+    const client = new MyCarrier({ api_key: 'custom-location-key', url: 'https://sandbox.example.test/proxy///' });
+
+    await assert.rejects(client.getShippingLocation('missing-location'), error => {
+        assert.ok(error instanceof HttpError);
+        assert.equal(error.cause.status, 404);
+        assert.equal(error.message, '404 Not Found');
+        assert.deepEqual(error.json, diagnostics);
+        assert.equal(error.text, JSON.stringify(diagnostics));
+        return true;
+    });
+
+    assert.equal(calls.length, 1);
+    assert.equal(calls[0].url, 'https://sandbox.example.test/proxy/api/v1/address/shipping-locations/missing-location');
+    assert.deepEqual([...new Headers(calls[0].options.headers)], [['x-mc-api-key', 'custom-location-key']]);
 });
 
 test('rating forwards the complete request and preserves priced rates with carrier diagnostics', async (t) => {
