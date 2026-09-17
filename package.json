@@ -19,13 +19,13 @@
         "shipping"
     ],
     "license": "MIT",
-    "name": "my-carrier",
+    "name": "mycarrier",
     "publishConfig": {
         "access": "public"
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/stores-com/my-carrier.git"
+        "url": "git+https://github.com/stores-com/mycarrier.git"
     },
     "scripts": {
         "test": "node --test --test-reporter=spec test/*.js",

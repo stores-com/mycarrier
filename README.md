@@ -5,15 +5,15 @@ A Node.js client for MyCarrier LTL freight rates, saved shipping locations, and 
 Official documentation: [MyCarrier Developer Guide](https://developer.mycarrier.io/docs/getting-started) · [MyCarrier API Reference](https://developer.mycarrier.io/reference).
 
 ```sh
-npm install github:stores-com/my-carrier
+npm install github:stores-com/mycarrier
 ```
 
-The initial release is available from GitHub; npm registry publication is pending. Once published, install with `npm install my-carrier`.
+The initial release is available from GitHub; npm registry publication is pending. Once published, install with `npm install mycarrier`.
 
 ## Usage
 
 ```js
-const MyCarrier = require('my-carrier');
+const MyCarrier = require('mycarrier');
 
 const myCarrier = new MyCarrier({
     api_key: process.env.MYCARRIER_API_KEY
