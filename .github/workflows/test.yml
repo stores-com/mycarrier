@@ -45,6 +45,9 @@ jobs:
         run: npm install --ignore-scripts --omit=dev
       - name: Test
         run: npm run test:coverage
+      - name: Write coverage for Coveralls
+        if: matrix.node == 24
+        run: node --test --experimental-test-coverage --test-reporter=lcov --test-reporter-destination=lcov.info test/*.js
       - name: Upload coverage to Coveralls
         if: matrix.node == 24
         uses: coverallsapp/github-action@v2
